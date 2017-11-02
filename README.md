@@ -53,7 +53,7 @@ And use this object to persist
     ListComplexObject complexObject = new ListComplexObject();
     complexObject.setUsers(users);    
 
-    ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(this, "mypref", MODE_PRIVATE);;
+    ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(this, "mypref", MODE_PRIVATE);
     complexPreferences.putObject("list", complexObject);
     complexPreferences.commit();
 ```
@@ -70,6 +70,50 @@ Get your complex object
 ```
 
 Good work!
+
+My Changes
+-------
+Register an OnSharedPreferenceChangeListener
+
+```java
+	ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(this, "mypref", MODE_PRIVATE);	
+	complexPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+                    // your code
+                }
+            });
+```
+
+Check if a key exists
+
+```java
+	ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(this, "mypref", MODE_PRIVATE);
+	if (complexPreferences.contains("yourKey")) {
+		// do stuff	
+	}
+```
+
+Get all key-value pairs
+```java
+	ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(this, "mypref", MODE_PRIVATE);
+	Map<String, ?> map = complexPreferences.getall();
+	ListComplexObject complexObject;
+	for (Map.Entry<String, ?> entry : map.entrySet()){
+		if(entry.getKey().equal("yourKey")){
+			complexObject = gson.fromJson((String) entry.getValue(), ListComplexObject.class);
+		}
+	}
+```
+
+Apply changes wihtout a return value, use this instead of commit if you call it in the UI thread
+```java
+	ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(this, "mypref", MODE_PRIVATE);
+	// This is the list from the example above
+	complexPreferences.putObject("list", complexObject);
+	complexPreferences.apply();
+```
+
 
 License
 -------
